@@ -1,6 +1,8 @@
 create extension if not exists postgis with schema extensions;
 create extension if not exists pgcrypto;
 
+set search_path = public, extensions;
+
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   username text unique not null,
