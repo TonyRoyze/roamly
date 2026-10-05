@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
+@import 'leaflet/dist/leaflet.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -162,7 +163,1257 @@
     font-family: Arial, Helvetica, sans-serif;
   }
 
-  button, a, input {
+  button,
+  a,
+  input {
     -webkit-tap-highlight-color: transparent;
   }
+}
+
+/* Roamly: one map canvas, ocean-blue actions, green local-buddy pins. */
+:root.light {
+  --background: #ffffff;
+  --foreground: #253c4b;
+  --card: #fff;
+  --card-foreground: #253c4b;
+  --popover: #fff;
+  --popover-foreground: #253c4b;
+  --primary: #2266e2;
+  --primary-foreground: #fff;
+  --secondary: #edf3fa;
+  --secondary-foreground: #3d566c;
+  --muted: #f2f5f7;
+  --muted-foreground: #6b7c87;
+  --accent: #eaf1ff;
+  --accent-foreground: #2266e2;
+  --border: #e3e9ec;
+  --input: #dde5ea;
+  --ring: #6194ed;
+}
+body {
+  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+}
+:is(.nearby-app, .roam-sheet) button {
+  cursor: pointer;
+}
+:is(.nearby-app, .roam-sheet) button:disabled {
+  cursor: default;
+}
+:is(.nearby-app, .roam-sheet) button:focus-visible,
+:is(.nearby-app, .roam-sheet) a:focus-visible {
+  outline: 3px solid #6194ed;
+  outline-offset: 3px;
+}
+:is(.nearby-app, .roam-sheet) .roam-app {
+  --ocean: #2266e2;
+  --leaf: #299d75;
+  --ink: #253c4b;
+  --quiet: #6b7c87;
+  position: relative;
+  height: 100dvh;
+  min-height: 540px;
+  width: 100%;
+  overflow: hidden;
+  background: #c7e5ed;
+  color: var(--ink);
+}
+:is(.nearby-app, .roam-sheet) .explore-map {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: #c7e5ed;
+}
+:is(.nearby-app, .roam-sheet) .leaflet-container {
+  font-family: inherit;
+}
+:is(.nearby-app, .roam-sheet) .leaflet-control-attribution {
+  font-size: 9px !important;
+  border-radius: 0 0 0 6px;
+}
+:is(.nearby-app, .roam-sheet) .map-header {
+  position: absolute;
+  z-index: 3;
+  top: 28px;
+  left: 32px;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  pointer-events: none;
+}
+:is(.nearby-app, .roam-sheet) .map-header > * {
+  pointer-events: auto;
+}
+:is(.nearby-app, .roam-sheet) .brand {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  padding: 10px 17px 10px 10px;
+  border-radius: 18px;
+  background: white;
+  box-shadow: 0 3px 20px #244f6212;
+  font-size: 27px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+}
+:is(.nearby-app, .roam-sheet) .brand-icon {
+  display: grid;
+  place-items: center;
+  width: 37px;
+  height: 37px;
+  border-radius: 12px;
+  background: var(--ocean);
+  color: white;
+}
+:is(.nearby-app, .roam-sheet) .brand-period {
+  margin-left: -7px;
+  color: var(--ocean);
+}
+:is(.nearby-app, .roam-sheet) .location-pill {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #ffffffed;
+  border-radius: 30px;
+  padding: 12px 17px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 3px 20px #244f6210;
+}
+:is(.nearby-app, .roam-sheet) .location-pill > svg:first-child {
+  color: var(--ocean);
+}
+:is(.nearby-app, .roam-sheet) .header-avatar {
+  margin-left: auto;
+  background: white;
+  padding: 5px;
+  border-radius: 50%;
+  box-shadow: 0 3px 20px #244f6212;
+}
+:is(.nearby-app, .roam-sheet) .map-heading {
+  position: absolute;
+  z-index: 2;
+  left: 32px;
+  top: 120px;
+  pointer-events: none;
+}
+:is(.nearby-app, .roam-sheet) .map-heading h1 {
+  font-size: clamp(26px, 2.8vw, 40px);
+  letter-spacing: -1.7px;
+  font-weight: 700;
+  line-height: 1.13;
+  margin: 12px 0;
+}
+:is(.nearby-app, .roam-sheet) .map-heading p {
+  font-size: 12px;
+  color: #466270;
+}
+:is(.nearby-app, .roam-sheet) .map-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 600;
+}
+:is(.nearby-app, .roam-sheet) .map-eyebrow > span,
+:is(.nearby-app, .roam-sheet) .demo-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #299d75;
+}
+:is(.nearby-app, .roam-sheet) .activity-panel {
+  position: absolute;
+  z-index: 4;
+  top: 290px;
+  left: 32px;
+  bottom: 28px;
+  width: 370px;
+  display: flex;
+  flex-direction: column;
+  background: #fffffffa;
+  border: 1px solid #ffffffc9;
+  border-radius: 24px;
+  box-shadow: 0 12px 60px #264e611c;
+  overflow: hidden;
+}
+:is(.nearby-app, .roam-sheet) .activity-panel.panel-expanded {
+  top: 107px;
+}
+:is(.nearby-app, .roam-sheet) .panel-top {
+  padding: 23px 22px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 8px;
+}
+:is(.nearby-app, .roam-sheet) .panel-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+:is(.nearby-app, .roam-sheet) .panel-top h2 {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  overflow-wrap: anywhere;
+}
+:is(.nearby-app, .roam-sheet) .panel-top .count-pill {
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: #eaf5ef;
+  color: #348061;
+  font-size: 10px;
+  white-space: nowrap;
+}
+:is(.nearby-app, .roam-sheet) .panel-subtitle {
+  font-size: 11px;
+  color: var(--quiet);
+  margin: 7px 0 19px;
+}
+:is(.nearby-app, .roam-sheet) .panel-scroll {
+  padding: 0 22px 20px;
+  overflow-y: auto;
+  min-height: 0;
+  flex: 1;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+:is(.nearby-app, .roam-sheet) .panel-handle {
+  display: none;
+}
+:is(.nearby-app, .roam-sheet) .panel-collapse {
+  display: none;
+}
+:is(.nearby-app, .roam-sheet) .people-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--quiet);
+  margin-bottom: 13px;
+}
+:is(.nearby-app, .roam-sheet) .people-search input {
+  flex: 1;
+  min-width: 0;
+  height: 37px;
+}
+:is(.nearby-app, .roam-sheet) .people-filters {
+  margin-bottom: 12px;
+  width: 100%;
+  justify-content: space-between;
+}
+:is(.nearby-app, .roam-sheet) .people-filters [data-slot='toggle-group-item'] {
+  font-size: 10px;
+  gap: 4px;
+  padding: 0 10px;
+  height: 31px;
+  border-radius: 20px;
+}
+:is(.nearby-app, .roam-sheet) .person-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  text-align: left;
+  width: 100%;
+  padding: 13px 0;
+  border-bottom: 1px solid #eef1f4;
+}
+:is(.nearby-app, .roam-sheet) .person-row:hover {
+  background: #f7f9fc;
+}
+:is(.nearby-app, .roam-sheet) .person-row > span:not([data-slot='avatar']) {
+  flex: 1;
+  min-width: 0;
+}
+:is(.nearby-app, .roam-sheet) .person-row strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 650;
+}
+:is(.nearby-app, .roam-sheet) .person-row small {
+  display: block;
+  font-size: 10px;
+  color: var(--quiet);
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+:is(.nearby-app, .roam-sheet) .person-row > svg {
+  color: #92a3ae;
+  flex-shrink: 0;
+}
+:is(.nearby-app, .roam-sheet) .buddy-dot,
+:is(.nearby-app, .roam-sheet) .traveller-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #299d75;
+}
+:is(.nearby-app, .roam-sheet) .traveller-dot {
+  background: #6194ed;
+}
+:is(.nearby-app, .roam-sheet) .plan-prompt {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  padding: 16px 12px;
+  margin: 19px 0;
+  background: #ecf3ff;
+  border-radius: 15px;
+}
+:is(.nearby-app, .roam-sheet) .plan-icon {
+  display: grid;
+  place-items: center;
+  color: var(--ocean);
+}
+:is(.nearby-app, .roam-sheet) .plan-prompt > div {
+  flex: 1;
+  min-width: 0;
+}
+:is(.nearby-app, .roam-sheet) .plan-prompt h3 {
+  font-size: 11px;
+  font-weight: 700;
+}
+:is(.nearby-app, .roam-sheet) .plan-prompt p {
+  font-size: 10px;
+  color: #637e9c;
+  line-height: 1.5;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+:is(.nearby-app, .roam-sheet) .plan-prompt > button {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  background: white;
+  color: var(--ocean);
+}
+:is(.nearby-app, .roam-sheet) .section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin: 20px 0 14px;
+}
+:is(.nearby-app, .roam-sheet) .section-heading h3 {
+  font-size: 12px;
+  font-weight: 650;
+}
+:is(.nearby-app, .roam-sheet) .section-heading button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--ocean);
+}
+:is(.nearby-app, .roam-sheet) .panel-footer {
+  padding: 12px 22px;
+  border-top: 1px solid #edf1f4;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 9px;
+  color: #72828b;
+  background: #fff;
+}
+:is(.nearby-app, .roam-sheet) .panel-footer > span:last-child {
+  margin-left: auto;
+}
+:is(.nearby-app, .roam-sheet) .map-controls {
+  position: absolute;
+  z-index: 3;
+  right: 28px;
+  bottom: 125px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+:is(.nearby-app, .roam-sheet) .map-controls [data-slot='button'] {
+  width: 43px;
+  height: 43px;
+  border-radius: 13px;
+  box-shadow: 0 4px 12px #29435312;
+}
+:is(.nearby-app, .roam-sheet) .zoom-controls {
+  background: white;
+  border-radius: 13px;
+  display: flex;
+  flex-direction: column;
+}
+:is(.nearby-app, .roam-sheet) .zoom-controls [data-slot='button'] {
+  box-shadow: none;
+}
+:is(.nearby-app, .roam-sheet) .bottom-dock {
+  position: absolute;
+  z-index: 6;
+  left: calc(50% + 130px);
+  transform: translateX(-50%);
+  bottom: 25px;
+  display: flex;
+  gap: 6px;
+  padding: 9px;
+  background: #fffffff5;
+  border: 1px solid white;
+  border-radius: 24px;
+  box-shadow: 0 8px 45px #29435328;
+  backdrop-filter: blur(20px);
+}
+:is(.nearby-app, .roam-sheet) .bottom-dock > button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 80px;
+  height: 55px;
+  border-radius: 17px;
+  color: #7a8a97;
+  font-size: 10px;
+  font-weight: 600;
+}
+:is(.nearby-app, .roam-sheet) .bottom-dock > button[aria-current] {
+  background: #eaf1ff;
+  color: var(--ocean);
+}
+:is(.nearby-app, .roam-sheet) .bottom-dock > button:hover {
+  background: #f0f5fd;
+}
+:is(.nearby-app, .roam-sheet) .dock-count {
+  position: absolute;
+  top: 2px;
+  right: 15px;
+  background: var(--ocean);
+  color: white;
+  font-size: 8px;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  font-style: normal;
+}
+:is(.nearby-app, .roam-sheet) .floating-plan {
+  position: absolute;
+  right: 28px;
+  bottom: 39px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 24px;
+  box-shadow: 0 6px 20px #2266e230;
+}
+:is(.nearby-app, .roam-sheet) .map-legend {
+  position: absolute;
+  z-index: 2;
+  top: 108px;
+  right: 31px;
+  display: flex;
+  gap: 16px;
+  padding: 10px 14px;
+  border-radius: 20px;
+  background: #ffffffdb;
+  font-size: 9px;
+}
+:is(.nearby-app, .roam-sheet) .map-legend > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+:is(.nearby-app, .roam-sheet) .roam-marker {
+  background: none;
+  border: none;
+}
+:is(.nearby-app, .roam-sheet) .person-pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 64px;
+}
+:is(.nearby-app, .roam-sheet) .pin-face {
+  display: grid;
+  place-items: center;
+  width: 57px;
+  height: 57px;
+  border-radius: 50%;
+  border: 4px solid white;
+  background: #d6e7ff;
+  box-shadow: 0 4px 14px #183e5e38;
+  color: #2266e2;
+  font-size: 22px;
+  font-weight: 700;
+  outline: 2px solid #82a9ed;
+}
+:is(.nearby-app, .roam-sheet) .roam-marker .pin-face > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+:is(.nearby-app, .roam-sheet) .buddy-pin .pin-face {
+  outline-color: #4daf8b;
+  background: #def3e5;
+  color: #2b8a65;
+}
+:is(.nearby-app, .roam-sheet) .self-pin .pin-face {
+  outline: 6px solid #2266e238;
+}
+:is(.nearby-app, .roam-sheet) .selected-pin .pin-face {
+  outline: 4px solid #2266e2;
+}
+:is(.nearby-app, .roam-sheet) .pin-name {
+  position: relative;
+  margin-top: -3px;
+  background: white;
+  border-radius: 15px;
+  padding: 2px 10px;
+  font-size: 10px;
+  font-weight: 650;
+  box-shadow: 0 3px 10px #2943531f;
+  white-space: nowrap;
+}
+:is(.nearby-app, .roam-sheet) .pin-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  background: #299d75;
+  color: white;
+  border: 2px solid white;
+}
+:is(.nearby-app, .roam-sheet) .pin-bubble {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  background: white;
+  box-shadow: 0 3px 15px #29435328;
+  padding: 11px 14px;
+  border-radius: 15px;
+  width: max-content;
+  max-width: 200px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.4;
+  font-weight: 600;
+  font-size: 11px;
+}
+:is(.nearby-app, .roam-sheet) .pin-bubble:after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  left: calc(50% - 7px);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 8px solid white;
+}
+:is(.nearby-app, .roam-sheet) .package-card {
+  flex-shrink: 0;
+}
+:is(.nearby-app, .roam-sheet) .package-card > img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  background: #e5eeeb;
+}
+:is(.nearby-app, .roam-sheet) .package-card [data-slot='card-title'] {
+  font-weight: 650;
+  letter-spacing: -0.3px;
+}
+:is(.nearby-app, .roam-sheet) .package-card [data-slot='card-description'] {
+  font-size: 10px;
+  color: #3e7d67;
+}
+:is(.nearby-app, .roam-sheet) .package-card [data-slot='card-content'] p {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
+}
+:is(.nearby-app, .roam-sheet) .package-duration {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--muted-foreground);
+  margin-top: 9px;
+}
+:is(.nearby-app, .roam-sheet) .package-price {
+  font-size: 15px;
+  font-weight: 700;
+}
+:is(.nearby-app, .roam-sheet) .package-price small {
+  display: block;
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+:is(.nearby-app, .roam-sheet) .compact-package > img {
+  height: 115px;
+}
+:is(.nearby-app, .roam-sheet) .package-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 2px;
+}
+:is(.nearby-app, .roam-sheet) .new-package {
+  width: 100%;
+  margin-bottom: 20px;
+}
+:is(.nearby-app, .roam-sheet) .profile-view {
+  padding-top: 23px;
+}
+:is(.nearby-app, .roam-sheet) .profile-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+:is(.nearby-app, .roam-sheet) .profile-hero h3 {
+  font-size: 27px;
+  letter-spacing: -0.8px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+:is(.nearby-app, .roam-sheet) .profile-hero p {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--quiet);
+  font-size: 12px;
+}
+:is(.nearby-app, .roam-sheet) .role-label {
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  background: #e9f5ef;
+  color: #2c8462;
+}
+:is(.nearby-app, .roam-sheet) .profile-bio {
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 20px 0 14px;
+  overflow-wrap: anywhere;
+}
+:is(.nearby-app, .roam-sheet) .profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: center;
+}
+:is(.nearby-app, .roam-sheet) .profile-tags span {
+  padding: 5px 10px;
+  background: #f1f5fa;
+  border-radius: 20px;
+  font-size: 11px;
+}
+:is(.nearby-app, .roam-sheet) .profile-languages {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--quiet);
+  margin: 18px 0;
+}
+:is(.nearby-app, .roam-sheet) .profile-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+:is(.nearby-app, .roam-sheet) .profile-packages,
+:is(.nearby-app, .roam-sheet) .request-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 28px;
+}
+:is(.nearby-app, .roam-sheet) .profile-packages h4,
+:is(.nearby-app, .roam-sheet) .request-detail h4 {
+  font-size: 13px;
+  font-weight: 650;
+}
+:is(.nearby-app, .roam-sheet) .request-detail > small {
+  color: var(--quiet);
+}
+:is(.nearby-app, .roam-sheet) .request-detail > p {
+  padding: 17px;
+  background: #edf4ff;
+  border-radius: 15px;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+:is(.nearby-app, .roam-sheet) .request-row {
+  padding: 16px;
+  width: 100%;
+  text-align: left;
+  background: #f4f7fb;
+  border-radius: 14px;
+  margin-bottom: 10px;
+}
+:is(.nearby-app, .roam-sheet) .request-row > span {
+  font-size: 13px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+:is(.nearby-app, .roam-sheet) .request-row > small {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--quiet);
+  font-size: 11px;
+  margin-top: 7px;
+}
+:is(.nearby-app, .roam-sheet) .helper-note {
+  background: #f1f5fa;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 12px;
+  color: var(--quiet);
+  line-height: 1.7;
+  margin-top: 23px;
+}
+.roam-sheet {
+  width: min(100%, 440px) !important;
+  max-width: 440px !important;
+}
+.roam-sheet [data-slot='sheet-header'] {
+  padding: 32px 25px 10px;
+}
+.roam-sheet [data-slot='sheet-title'] {
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -0.8px;
+  padding-right: 20px;
+}
+.roam-sheet [data-slot='sheet-description'] {
+  font-size: 12px;
+  margin-top: 8px;
+  line-height: 1.7;
+}
+:is(.nearby-app, .roam-sheet) .sheet-scroll {
+  overflow-y: auto;
+  padding: 10px 25px 32px;
+}
+:is(.nearby-app, .roam-sheet) .editor-form input {
+  height: 42px;
+}
+:is(.nearby-app, .roam-sheet) .editor-form textarea,
+:is(.nearby-app, .roam-sheet) .editor-form select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--input);
+  background: white;
+  color: var(--foreground);
+  border-radius: 9px;
+  font: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+:is(.nearby-app, .roam-sheet) .editor-form textarea:focus-visible,
+:is(.nearby-app, .roam-sheet) .editor-form select:focus-visible {
+  outline: 3px solid #6194ed70;
+  border-color: #6194ed;
+}
+:is(.nearby-app, .roam-sheet) .portrait-options {
+  display: flex;
+  gap: 13px;
+  padding: 5px 0;
+}
+:is(.nearby-app, .roam-sheet) .portrait-options button {
+  border-radius: 50%;
+}
+:is(.nearby-app, .roam-sheet) .portrait-options button[aria-pressed='true'] {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+:is(.nearby-app, .roam-sheet) .muted {
+  color: var(--muted-foreground);
+}
+:is(.nearby-app, .roam-sheet) .conversation-panel {
+  bottom: 28px;
+}
+:is(.nearby-app, .roam-sheet) .conversation-context {
+  font-size: 11px;
+  color: var(--quiet);
+  padding: 12px 22px;
+  border-bottom: 1px solid #eef1f4;
+  overflow-wrap: anywhere;
+}
+:is(.nearby-app, .roam-sheet) .chat-start {
+  font-size: 10px;
+  color: var(--quiet);
+  text-align: center;
+  margin: 4px 0 22px;
+}
+:is(.nearby-app, .roam-sheet) .conversation-panel [data-slot='message'] {
+  margin-top: 12px;
+}
+:is(.nearby-app, .roam-sheet) .chat-compose {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid #edf1f4;
+  flex-shrink: 0;
+}
+:is(.nearby-app, .roam-sheet) .chat-compose input {
+  min-width: 0;
+  flex: 1;
+  height: 40px;
+}
+:is(.nearby-app, .roam-sheet) .chat-package-picker {
+  max-height: 210px;
+  overflow: auto;
+  padding: 16px;
+  border-top: 1px solid #edf1f4;
+  flex-shrink: 0;
+}
+:is(.nearby-app, .roam-sheet) .chat-package-picker > strong {
+  font-size: 12px;
+}
+:is(.nearby-app, .roam-sheet) .chat-package-picker > button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 0;
+  font-size: 11px;
+}
+:is(.nearby-app, .roam-sheet) .chat-package-picker > button span {
+  flex: 1;
+}
+:is(.nearby-app, .roam-sheet) .chat-package-picker small {
+  display: block;
+  color: var(--quiet);
+}
+:is(.nearby-app, .roam-sheet) .chat-package-picker p {
+  font-size: 12px;
+  margin-top: 10px;
+}
+:is(.nearby-app, .roam-sheet) .roam-notice {
+  position: absolute;
+  z-index: 10;
+  top: 29px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 30px);
+  padding: 14px 17px;
+  border-radius: 15px;
+  background: #253c4b;
+  color: white;
+  box-shadow: 0 5px 25px #29435330;
+  font-size: 12px;
+}
+:is(.nearby-app, .roam-sheet) .roam-notice > svg,
+:is(.nearby-app, .roam-sheet) .roam-notice > button {
+  flex-shrink: 0;
+}
+:is(.nearby-app, .roam-sheet) .map-error {
+  position: absolute;
+  left: 50%;
+  top: 90px;
+  z-index: 3;
+  max-width: 280px;
+  padding: 12px;
+  background: white;
+  border-radius: 12px;
+  font-size: 11px;
+}
+@media (min-width: 1500px) {
+  :is(.nearby-app, .roam-sheet) .activity-panel {
+    width: 390px;
+  }
+}
+@media (max-width: 1100px) and (min-width: 701px) {
+  :is(.nearby-app, .roam-sheet) .activity-panel {
+    left: 22px;
+    width: 325px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-heading {
+    left: 22px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-header {
+    left: 22px;
+    right: 22px;
+  }
+  :is(.nearby-app, .roam-sheet) .floating-plan {
+    right: 22px;
+    bottom: 115px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-controls {
+    bottom: 180px;
+  }
+  :is(.nearby-app, .roam-sheet) .bottom-dock {
+    left: calc(50% + 155px);
+  }
+  :is(.nearby-app, .roam-sheet) .bottom-dock > button {
+    width: 67px;
+  }
+}
+@media (max-height: 780px) and (min-width: 701px) {
+  :is(.nearby-app, .roam-sheet) .map-heading h1 {
+    font-size: 28px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-heading {
+    top: 110px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-heading p {
+    display: none;
+  }
+  :is(.nearby-app, .roam-sheet) .activity-panel {
+    top: 225px;
+  }
+}
+@media (max-width: 700px) {
+  :is(.nearby-app, .roam-sheet) .roam-app {
+    min-height: 420px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-header {
+    left: 16px;
+    right: 16px;
+    top: max(18px, env(safe-area-inset-top));
+    gap: 9px;
+  }
+  :is(.nearby-app, .roam-sheet) .brand {
+    padding: 7px 12px 7px 7px;
+    border-radius: 15px;
+    font-size: 22px;
+    gap: 5px;
+  }
+  :is(.nearby-app, .roam-sheet) .brand-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+  }
+  :is(.nearby-app, .roam-sheet) .brand-icon svg {
+    width: 21px;
+  }
+  :is(.nearby-app, .roam-sheet) .brand-period {
+    margin-left: -5px;
+  }
+  :is(.nearby-app, .roam-sheet) .location-pill {
+    padding: 10px 11px;
+    font-size: 10px;
+    gap: 5px;
+  }
+  :is(.nearby-app, .roam-sheet) .location-pill > svg:last-child {
+    display: none;
+  }
+  :is(.nearby-app, .roam-sheet) .header-avatar {
+    padding: 3px;
+  }
+  :is(.nearby-app, .roam-sheet) .header-avatar [data-slot='avatar'] {
+    width: 33px;
+    height: 33px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-heading {
+    top: 84px;
+    left: 20px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-eyebrow {
+    display: none;
+  }
+  :is(.nearby-app, .roam-sheet) .map-heading h1 {
+    font-size: 27px;
+    letter-spacing: -1px;
+    margin: 0 0 6px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-heading p {
+    font-size: 10px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-legend {
+    top: 173px;
+    left: 20px;
+    right: auto;
+    padding: 7px 10px;
+    font-size: 8px;
+    gap: 10px;
+  }
+  :is(.nearby-app, .roam-sheet) .activity-panel,
+  :is(.nearby-app, .roam-sheet) .activity-panel.panel-expanded {
+    top: auto;
+    left: 10px;
+    right: 10px;
+    bottom: calc(91px + env(safe-area-inset-bottom));
+    width: auto;
+    height: 225px;
+    max-height: calc(100dvh - 175px - env(safe-area-inset-bottom));
+    border-radius: 23px;
+  }
+  :is(.nearby-app, .roam-sheet) .activity-panel.panel-expanded {
+    height: 65dvh;
+  }
+  :is(.nearby-app, .roam-sheet) .panel-handle {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 19px;
+    flex-shrink: 0;
+  }
+  :is(.nearby-app, .roam-sheet) .panel-handle span {
+    width: 31px;
+    height: 4px;
+    background: #dce4ea;
+    border-radius: 10px;
+  }
+  :is(.nearby-app, .roam-sheet) .panel-top {
+    padding: 0 18px;
+  }
+  :is(.nearby-app, .roam-sheet) .panel-top h2 {
+    font-size: 18px;
+  }
+  :is(.nearby-app, .roam-sheet) .panel-collapse {
+    display: flex;
+    margin-left: auto;
+  }
+  :is(.nearby-app, .roam-sheet) .panel-top .count-pill {
+    display: none;
+  }
+  :is(.nearby-app, .roam-sheet) .panel-scroll {
+    padding: 0 18px 18px;
+  }
+  :is(.nearby-app, .roam-sheet) .panel-subtitle {
+    margin: 3px 0 12px;
+    font-size: 10px;
+  }
+  :is(.nearby-app, .roam-sheet) .panel-footer {
+    display: none;
+  }
+  :is(.nearby-app, .roam-sheet)
+    .activity-panel:not(.panel-expanded)
+    .people-search,
+  :is(.nearby-app, .roam-sheet)
+    .activity-panel:not(.panel-expanded)
+    .people-filters {
+    display: none;
+  }
+  :is(.nearby-app, .roam-sheet)
+    .activity-panel:not(.panel-expanded)
+    .person-row {
+    padding: 9px 0;
+  }
+  :is(.nearby-app, .roam-sheet) .bottom-dock {
+    left: 50%;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    width: calc(100% - 32px);
+    max-width: 410px;
+    padding: 7px;
+    gap: 2px;
+    border-radius: 23px;
+  }
+  :is(.nearby-app, .roam-sheet) .bottom-dock > button {
+    flex: 1;
+    width: auto;
+    height: 53px;
+    font-size: 9px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-controls {
+    right: 16px;
+    bottom: calc(332px + env(safe-area-inset-bottom));
+    gap: 9px;
+  }
+  :is(.nearby-app, .roam-sheet) .map-controls [data-slot='button'] {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+  :is(.nearby-app, .roam-sheet) .zoom-controls {
+    display: none;
+  }
+  :is(.nearby-app, .roam-sheet) .floating-plan {
+    right: auto;
+    left: 17px;
+    bottom: calc(332px + env(safe-area-inset-bottom));
+    height: 37px;
+    font-size: 11px;
+    padding: 0 15px;
+  }
+  :is(.nearby-app, .roam-sheet) .roam-app:has(.panel-expanded) .map-controls,
+  :is(.nearby-app, .roam-sheet) .roam-app:has(.panel-expanded) .floating-plan {
+    display: none;
+  }
+  :is(.nearby-app, .roam-sheet) .roam-notice {
+    top: 75px;
+    width: max-content;
+    font-size: 11px;
+    padding: 12px;
+  }
+  :is(.nearby-app, .roam-sheet) .person-pin {
+    transform: scale(0.88);
+  }
+  :is(.nearby-app, .roam-sheet) .map-error {
+    top: 210px;
+    left: 20px;
+  }
+  :is(.nearby-app, .roam-sheet) .conversation-context {
+    padding: 8px 18px;
+    font-size: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.nearby-app, .roam-sheet) *,
+  :is(.nearby-app, .roam-sheet) *::before,
+  :is(.nearby-app, .roam-sheet) *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:is(.nearby-app, .roam-sheet) .roam-marker .pin-face {
+  overflow: hidden;
+}
+:is(.nearby-app, .roam-sheet) .roam-marker .pin-face > img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+}
+:is(.nearby-app, .roam-sheet) .roam-app::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 16px;
+  width: 485px;
+  height: 290px;
+  background: linear-gradient(
+    110deg,
+    #ffffffef 0%,
+    #ffffffd9 60%,
+    #ffffff00 100%
+  );
+  pointer-events: none;
+  mask-image: linear-gradient(black 75%, transparent);
+}
+:is(.nearby-app, .roam-sheet) .people-list {
+  max-height: 216px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+@media (max-width: 700px) {
+  :is(.nearby-app, .roam-sheet) .roam-app::after {
+    width: 100%;
+    height: 215px;
+    background: linear-gradient(#fffffff5, #ffffffc9 60%, #ffffff00);
+    mask-image: none;
+  }
+  :is(.nearby-app, .roam-sheet) .people-list {
+    max-height: none;
+  }
+}
+@media (max-width: 360px) {
+  :is(.nearby-app, .roam-sheet) .location-country {
+    display: none;
+  }
+  :is(.nearby-app, .roam-sheet) .map-header {
+    gap: 7px;
+  }
+  :is(.nearby-app, .roam-sheet) .portrait-options {
+    gap: 8px;
+  }
+}
+.nearby-back-link {
+  position: absolute;
+  z-index: 10;
+  top: 18px;
+  right: 20px;
+  padding: 10px 15px;
+  border-radius: 20px;
+  background: white;
+  color: #253c4b;
+  box-shadow: 0 3px 20px #244f6220;
+  font-size: 12px;
+  font-weight: 600;
+}
+.nearby-app .map-header .brand {
+  font-size: 20px;
+  letter-spacing: -1px;
+}
+@media (max-width: 700px) {
+  .nearby-app .map-header .brand {
+    font-size: 17px;
+    padding-right: 10px;
+  }
+  .nearby-app .location-country {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .nearby-app .nearby-back-link {
+    position: relative;
+    top: auto;
+    right: auto;
+    display: block;
+    padding: 12px 24px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+.shared-nearby-shell {
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: 82px minmax(0, 1fr) 0;
+}
+.shared-nearby-shell > .nearby-app { min-height: 0; }
+.shared-nearby-shell .shared-site-header { overflow: visible; z-index: 10; }
+.shared-nearby-shell .shared-site-header .site-header { height: 82px; }
+.shared-nearby-shell .nearby-app .roam-app { height: 100%; min-height: 0; }
+.nearby-app .nearby-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  padding: 8px 12px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #e3e9ec;
+}
+.nearby-app .nearby-tabs button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 48px;
+  border-radius: 10px;
+  font-size: 10px;
+  color: #6b7c87;
+}
+.nearby-app .nearby-tabs button[aria-current] { color: #2266e2; background: #eaf1ff; }
+.nearby-app .nearby-tabs button:hover { background: #f2f5f7; }
+@media (max-width: 760px) {
+  .shared-nearby-shell {
+    grid-template-rows: 64px minmax(0, 1fr) calc(70px + env(safe-area-inset-bottom));
+  }
+  .shared-nearby-shell .shared-site-header .site-header { height: 64px; }
+  .shared-nearby-shell .nearby-app .activity-panel {
+    bottom: 12px;
+    height: 280px;
+    max-height: calc(100% - 85px);
+  }
+  .shared-nearby-shell .nearby-app .activity-panel.panel-expanded { height: calc(100% - 85px); }
 }
